@@ -53,7 +53,7 @@ impl FromStr for Person {
         if s.len() == 0 {
             return Err(ParsePersonError::Empty);
         }
-        let mut split = s.split(',').collect::<Vec<&str>>();
+        let mut split : Vec<&str> = s.split(',').collect();
         if split.len() != 2 {
             return Err(ParsePersonError::BadLen);
         }

@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -69,14 +68,48 @@ impl<T> LinkedList<T> {
             },
         }
     }
-	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
+	pub fn merge(mut list_a:LinkedList<T>,mut list_b:LinkedList<T>) -> Self
+    where T : std::cmp::PartialOrd
 	{
-		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		let mut list_c = LinkedList::<T>::new();
+
+        let mut push_node = |list : &mut LinkedList<T>, new_node: Option<NonNull<Node<T>>>| {
+            if let Some(node_ptr) = new_node {
+                    if list.start.is_none() {
+                        list.start = Some(node_ptr);
+                        list.end = Some(node_ptr);
+                    } else {
+                        unsafe {
+                            (*list.end.unwrap().as_ptr()).next = Some(node_ptr);
+                        }
+                        list.end = Some(node_ptr);
+                    }
+                list.length += 1;
+            }
+        };
+
+        while let (Some(a_node),Some(b_node)) = (list_a.start,list_b.start){
+            if unsafe { &a_node.as_ref().val } < unsafe { &b_node.as_ref().val } {
+                push_node(&mut list_c,Some(a_node));
+                list_a.start = unsafe { (*a_node.as_ptr()).next };
+            }
+            else{
+                push_node(&mut list_c,Some(b_node));
+                list_b.start = unsafe { (*b_node.as_ptr()).next };
+            }
         }
+
+        while let Some(a_node) = list_a.start {
+            list_a.start = unsafe { (*a_node.as_ptr()).next };
+            push_node(&mut list_c, Some(a_node));
+        }
+
+        while let Some(b_node) = list_b.start {
+            list_b.start = unsafe { (*b_node.as_ptr()).next };
+            push_node(&mut list_c, Some(b_node));
+        }
+
+        list_c
 	}
 }
 

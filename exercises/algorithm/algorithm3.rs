@@ -3,10 +3,17 @@
 	This problem requires you to implement a sorting algorithm
 	you can use bubble sorting, insertion sorting, heap sorting, etc.
 */
-// I AM NOT DONE
 
-fn sort<T>(array: &mut [T]){
-	//TODO
+fn sort<T>(array: &mut [T])
+where T:std::cmp::PartialOrd
+{
+    for i in 0..array.len() {
+        for j in 0..i {
+        	if array[j] > array[i] {
+                array.swap(i,j);
+            }
+        }
+    }
 }
 #[cfg(test)]
 mod tests {
